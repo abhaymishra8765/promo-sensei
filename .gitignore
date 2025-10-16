@@ -1,0 +1,8 @@
+venv/
+src/__pycache__/
+.env
+
+chroma_db/
+src/chroma_db/
+
+debug_screenshot.png
