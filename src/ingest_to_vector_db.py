@@ -11,50 +11,44 @@ class VectorDBManager:
         self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
         self.collection = self.client.get_or_create_collection(
             name=collection_name,
-            metadata={"hnsw:space": "cosine"} 
+            metadata={"hnsw:space": "cosine"}
         )
 
     def ingest(self, offers: List[Dict]):
-        
-        
         if not offers:
             print("No offers to ingest.")
             return
-        documents = [f"Title: {o['title']}. Description: {o['description']}" for o in offers]
-        metadatas = [{"brand": o['brand_name'], "link": o.get('offer_link', 'N/A')} for o in offers]
-        ids = [f"offer_{i}_{o['brand_name']}" for i, o in enumerate(offers)]
+
+        documents = [f"{o['title']}: {o['description']}" for o in offers]
         
+        metadatas = [
+            {
+                "brand": o['brand_name'],
+                "link": o.get('offer_link', 'N/A'),
+                "title": o['title'],
+                "full_offer_description": o['description'] 
+            } for o in offers
+        ]
+        
+        ids = [f"offer_{i}_{o['brand_name']}_{o['title'][:20]}" for i, o in enumerate(offers)]
+
         self.collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
-        print(f"Ingestion complete. {len(documents)} offers upserted into the database.")
-    
+        print(f"Ingestion complete. {len(documents)} offers upserted with rich metadata.")
+
     def query(self, query_text: str, n_results: int = 5, brand: str = None) -> Dict:
         """Queries the collection for relevant documents, with optional brand filtering."""
-        
-        
         if brand:
             where_clause = {"brand": brand}
             return self.collection.query(
-                query_texts=[query_text],
-                n_results=n_results,
-                where=where_clause
+                query_texts=[query_text], n_results=n_results, where=where_clause
             )
         else:
-            
             return self.collection.query(
-                query_texts=[query_text],
-                n_results=n_results
+                query_texts=[query_text], n_results=n_results
             )
 
-def run_ingestion():
-    """Initializes scrapers and ingests their data into the vector DB."""
-    print("Starting data ingestion process...")
-    puma_scraper = PumaScraper()
-    all_offers = puma_scraper.scrape()
-    
+def run_ingestion_for_offers(all_offers: List[Dict]):
+    """Takes a list of offers and ingests them into the vector DB."""
     db_manager = VectorDBManager()
     db_manager.ingest(all_offers)
-    print("Ingestion process finished.")
     return f"Refresh complete! Scraped and indexed {len(all_offers)} offers."
-
-if __name__ == '__main__':
-    run_ingestion()

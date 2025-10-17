@@ -1,5 +1,22 @@
+# INSERT THIS NEW CODE
 
-from src.ingest_to_vector_db import run_ingestion
+# This script is the correct entry point to start the ingestion process.
+from src.scraper import PumaScraper
+from src.ingest_to_vector_db import run_ingestion_for_offers
 
-if __name__ == "__main__":
-    run_ingestion()
+def main():
+    """The main script to run the Puma scraper and ingest its data."""
+    print("Starting the ingestion process for Puma...")
+
+    puma_scraper = PumaScraper()
+    puma_offers = puma_scraper.scrape()
+
+    if puma_offers:
+        run_ingestion_for_offers(puma_offers)
+    else:
+        print("No offers were scraped from Puma. Ingestion skipped.")
+
+    print("Puma ingestion process finished successfully.")
+
+if __name__ == '__main__':
+    main()

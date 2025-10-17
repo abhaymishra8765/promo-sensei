@@ -9,18 +9,15 @@ class BaseScraper(ABC):
     def scrape(self) -> List[Dict]:
         pass
 
+
 class PumaScraper(BaseScraper):
-    """
-    The definitive scraper for Puma.
-    This version uses intelligent price parsing to get the sale price.
-    """
+    
     def __init__(self, url: str = "https://in.puma.com/in/en/deals"):
         self.url = url
 
     def scrape(self) -> List[Dict]:
-        print("Scraping Puma with intelligent price parsing...")
+        print("Scraping Puma...")
         offers = []
-        
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             context = browser.new_context(
@@ -57,31 +54,42 @@ class PumaScraper(BaseScraper):
             finally:
                 browser.close()
 
-        
         soup = BeautifulSoup(html_content, 'html.parser')
         product_list_items = soup.select('li:has(a[data-test-id="product-list-item-link"])')
-        print(f"Found {len(product_list_items)} products. Parsing with new price logic...")
+        print(f"Found {len(product_list_items)} products. Parsing for detailed offers...")
 
         for item in product_list_items:
             try:
                 title_tag = item.find('h3')
                 title = title_tag.text.strip() if title_tag else "No Title"
 
-                
-                price = "N/A"
-                
-                all_price_spans = item.find_all('span', string=lambda t: t and '₹' in t)
+                sale_price = "N/A"
+                original_price_text = ""
+                original_price_formatted = ""
+                discount = ""
 
-                for span in all_price_spans:
-                    
-                    if not span.find_parent('s'): 
-                        price = span.text.strip()
+                original_price_tag = item.select_one('s span[data-test-id="price"]')
+                if original_price_tag:
+                    original_price_text = original_price_tag.text.strip()
+                    original_price_formatted = f"(was {original_price_text})"
+
+                all_price_tags = item.find_all('span', {'data-test-id': 'price'})
+                for tag in all_price_tags:
+                    current_price_text = tag.text.strip()
+                    if current_price_text != original_price_text:
+                        sale_price = current_price_text
                         break 
-                
-                
-                if price == "N/A" and all_price_spans:
-                    price = all_price_spans[0].text.strip()
-                
+                    
+                if sale_price == "N/A" and all_price_tags:
+                    sale_price = all_price_tags[0].text.strip()
+
+                discount_tag = item.find(attrs={'data-test-id': 'product-badge-sale'})
+                if discount_tag:
+                    discount = discount_tag.text.strip().replace('-', '') + " off"
+
+                description = f"Offer on {title}. Now available for {sale_price} {original_price_formatted}. "
+                if discount:
+                    description += f"This is a {discount} deal. "
 
                 link_tag = item.find('a', {'data-test-id': 'product-list-item-link'})
                 relative_link = link_tag.get('to') or link_tag.get('href', '')
@@ -89,13 +97,14 @@ class PumaScraper(BaseScraper):
 
                 offers.append({
                     "title": title,
-                    "description": f"Special price on {title} at {price}.",
-                    "expiry_date": "Not specified",
+                    "description": description.strip(),
+                    "time_period": "Not specified",
                     "brand_name": "Puma",
                     "offer_link": offer_link
                 })
             except Exception as e:
                 print(f"Error parsing a product tile: {e}")
 
-        print(f"Successfully scraped and parsed {len(offers)} offers with correct prices.")
+        print(f"Successfully scraped and parsed {len(offers)} detailed offers.")
         return offers
+

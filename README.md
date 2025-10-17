@@ -19,8 +19,8 @@ Smart Slack-based assistant that monitors e-commerce sites, scrapes real-time pr
 - [Slack App Setup](#slack-app-setup)
 - [How to Run](#how-to-run)
 - [Usage](#usage)
-- [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
+- [Key Design Decisions](#key-design-decisions)
 
 ---
 
@@ -133,12 +133,99 @@ python slackbot.py
 
 Interact in Slack using the slash command:
 
-| Command                       | Description                           | Example                             |
-| ----------------------------- | ------------------------------------- | ----------------------------------- |
-| `/promosensei search <query>` | Finds deals via natural language.     | `/promosensei search running shoes` |
-| `/promosensei brand <name>`   | Retrieves current offers for a brand. | `/promosensei brand Puma`           |
-| `/promosensei refresh`        | Triggers scraping + ingestion.        | `/promosensei refresh`              |
-| `/promosensei help`           | Lists available commands.             | `/promosensei help`                 |
+| Command                       | Description                               | Example                             |
+| ----------------------------- | ----------------------------------------- | ----------------------------------- |
+| `/promosensei search <query>` | Finds deals via natural language.         | `/promosensei search running shoes` |
+| `/promosensei brand <name>`   | Retrieves current offers for a brand.     | `/promosensei brand Puma`           |
+| `/promosensei refresh`        | Triggers scraping + ingestion.            | `/promosensei refresh`              |
+| `/promosensei summary`        | Get a summary of the top deals available. | `/promosensei summary`              |
+
+## Example Interactions
+
+Here are real examples of how Promo Sensei works in Slack:
+
+### Welcome Message
+
+When you first interact with the bot, you'll see:
+
+```
+Welcome to Promo Sensei! Here are the available commands:
+• /promosensei search <query>: Find specific deals.
+• /promosensei summary: Get a summary of the top deals available.
+• /promosensei brand <brand>: Get all offers for a specific brand.
+• /promosensei refresh: Update the promotion database.
+```
+
+### Data Refresh
+
+**User:** `/promosensei refresh`
+
+**Bot Response:**
+
+```
+Starting the data refresh process. This may take a moment...
+Refresh complete! Scraped and indexed 40 offers.
+```
+
+### Summary Command
+
+**User:** `/promosensei summary`
+
+**Bot Response:**
+
+```
+Generating a summary of the top deals for you...
+
+Shuffle Mid Sneakers
+• Offer: Now available for ₹5,999 (was —). This is a 57% off deal.
+• Brand: Puma
+• Link: View Deal
+
+Ca Pro Mid Sneakers
+• Offer: Now available for ₹9,999 (was —). This is a 50% off deal.
+• Brand: Puma
+• Link: View Deal
+
+Iconic T7 Mid-Rise Women's Leggings
+• Offer: Now available for ₹2,299 (was —). This is a 30% off deal.
+• Brand: Puma
+• Link: View Deal
+```
+
+### Brand Search
+
+**User:** `/promosensei brand puma`
+
+**Bot Response:**
+
+```
+Retaliate 2 Running Shoes
+• Product Description: No description provided.
+• Offer: Now available for ₹4,999 (was ₹9,089). This is a 45% off deal.
+• Brand: Puma
+• Link: View Deal
+
+Shuffle Mid Sneakers
+• Product Description: No description provided.
+• Offer: Now available for ₹5,999 (was ₹13,953). This is a 57% off deal.
+• Brand: Puma
+• Link: View Deal
+```
+
+### Natural Language Search
+
+**User:** `/promosensei search "Any flat 50% off deals today?"`
+
+**Bot Response:**
+
+```
+Searching for deals related to '"Any flat 50% off deals today?"'...
+
+Ca Pro Mid Sneakers
+• Offer: Now available for ₹9,999 (was ₹19,998). This is a 50% off deal.
+• Brand: Puma
+• Link: View Deal
+```
 
 ## Troubleshooting
 
@@ -160,9 +247,9 @@ Interact in Slack using the slash command:
 
 - Grounded responses: only retrieved context is used to answer.
 - Efficient: local similarity search limits tokens sent to the LLM.
-- Groq chosen for high throughput, low latency with Llama 3 family.
+- Groq chosen for high throughput, low latency openai family.
 
-### Code Architecture (OOP & src Layout)
+### Code Architecture
 
 - Single Responsibility across `PumaScraper`, `VectorDBManager`, `RAGQueryHandler`.
 - `BaseScraper` enables adding new retailers without core changes.
