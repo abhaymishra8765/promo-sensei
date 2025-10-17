@@ -8,6 +8,10 @@ Smart Slack-based assistant that monitors e-commerce sites, scrapes real-time pr
 - **Fast responses**: Embedding search in ChromaDB + Groq LLM for low latency.
 - **Modular design**: Clear separation for scraping, ingestion, and querying.
 
+### Demo
+
+Watch the demo video here: [Loom – Promo Sensei Demo](https://www.loom.com/share/b10ef57b77eb4f3b86dc0c9c99d345c3?sid=e2775899-72e3-4cf9-bc77-08557bbac2b0)
+
 ## Table of Contents
 
 - [Features](#features)
