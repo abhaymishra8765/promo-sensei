@@ -177,17 +177,17 @@ Refresh complete! Scraped and indexed 40 offers.
 Generating a summary of the top deals for you...
 
 Shuffle Mid Sneakers
-• Offer: Now available for ₹5,999 (was —). This is a 57% off deal.
+• Offer: This is a 57% off deal.
 • Brand: Puma
 • Link: View Deal
 
 Ca Pro Mid Sneakers
-• Offer: Now available for ₹9,999 (was —). This is a 50% off deal.
+• Offer: This is a 50% off deal.
 • Brand: Puma
 • Link: View Deal
 
 Iconic T7 Mid-Rise Women's Leggings
-• Offer: Now available for ₹2,299 (was —). This is a 30% off deal.
+• Offer: This is a 30% off deal.
 • Brand: Puma
 • Link: View Deal
 ```
@@ -200,14 +200,12 @@ Iconic T7 Mid-Rise Women's Leggings
 
 ```
 Retaliate 2 Running Shoes
-• Product Description: No description provided.
-• Offer: Now available for ₹4,999 (was ₹9,089). This is a 45% off deal.
+• Offer: This is a 45% off deal.
 • Brand: Puma
 • Link: View Deal
 
 Shuffle Mid Sneakers
-• Product Description: No description provided.
-• Offer: Now available for ₹5,999 (was ₹13,953). This is a 57% off deal.
+• Offer: This is a 57% off deal.
 • Brand: Puma
 • Link: View Deal
 ```
@@ -222,7 +220,7 @@ Shuffle Mid Sneakers
 Searching for deals related to '"Any flat 50% off deals today?"'...
 
 Ca Pro Mid Sneakers
-• Offer: Now available for ₹9,999 (was ₹19,998). This is a 50% off deal.
+• Offer: This is a 50% off deal.
 • Brand: Puma
 • Link: View Deal
 ```

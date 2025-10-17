@@ -107,4 +107,3 @@ class PumaScraper(BaseScraper):
 
         print(f"Successfully scraped and parsed {len(offers)} detailed offers.")
         return offers
-

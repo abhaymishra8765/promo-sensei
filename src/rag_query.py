@@ -35,7 +35,7 @@ class RAGQueryHandler:
 
         **Required Output Format:**
         >*[Product Title]*
-        >• *Offer:* Now available for [Sale Price] (was [Original Price]). This is a [Discount] deal.
+        >• *Offer:* This is a [Discount] deal.
         >• *Brand:* [Brand Name]
         >• *Link:* <[URL]|View Deal>
 

@@ -1,11 +1,9 @@
-# slackbot.py
 import os
 import threading
 from dotenv import load_dotenv
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from src.rag_query import rag_handler
-# 1. Import the scraper class AND the correct ingestion function
 from src.scraper import PumaScraper
 from src.ingest_to_vector_db import run_ingestion_for_offers
 
@@ -26,12 +24,12 @@ def handle_command(ack, respond, command):
         if not query:
             respond("Please provide a search term. Usage: `/promosensei search <your query>`")
             return
-        respond(f"🤔 Searching for deals related to *'{query}'*...")
+        respond(f"Searching for deals related to *'{query}'*...")
         ai_response = rag_handler.get_response(query=query)
         respond(text=ai_response)
 
     elif subcommand == "summary":
-        respond("🔥 Generating a summary of the top deals for you...")
+        respond("Generating a summary of the top deals for you...")
         summary_query = "Summarize the top 5 best deals available right now"
         ai_response = rag_handler.get_response(query=summary_query)
         respond(text=ai_response)
@@ -48,21 +46,17 @@ def handle_command(ack, respond, command):
     elif subcommand == "refresh":
         respond("Starting the data refresh process. This may take a moment...")
 
-        # 2. THIS IS THE CORRECTED ingestion task logic
         def ingestion_task():
             try:
-                # First, instantiate and run the scraper
                 print("Refresh triggered: Scraping Puma...")
                 puma_scraper = PumaScraper()
-                all_offers = puma_scraper.scrape() # Get the list of offers
+                all_offers = puma_scraper.scrape()
 
-                # Then, pass the scraped offers to the ingestion function
                 if all_offers:
                     print(f"Refresh: Scraped {len(all_offers)} offers. Ingesting...")
-                    # Pass the 'all_offers' list here
                     result_message = run_ingestion_for_offers(all_offers)
                     print("Refresh: Ingestion complete.")
-                    respond(result_message) # Send confirmation back to Slack
+                    respond(result_message) 
                 else:
                     print("Refresh: No offers scraped.")
                     respond("Refresh complete, but no offers were found during the scrape.")
@@ -71,11 +65,10 @@ def handle_command(ack, respond, command):
                 print(f"Refresh Error: {e}")
                 respond(f"An error occurred during refresh: {e}")
 
-        # Start the task in a background thread
         thread = threading.Thread(target=ingestion_task)
         thread.start()
 
-    else: # Help command
+    else: 
         respond(
             "Welcome to Promo Sensei! Here are the available commands:\n"
             "• `/promosensei search <query>`: Find specific deals.\n"
@@ -85,6 +78,6 @@ def handle_command(ack, respond, command):
         )
 
 if __name__ == "__main__":
-    print("🤖 Promo Sensei bot is starting...") # Corrected print message
+    print("Promo Sensei bot is starting...") 
     handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
