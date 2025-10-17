@@ -62,7 +62,7 @@ Smart Slack-based assistant that monitors e-commerce sites, scrapes real-time pr
 ## Installation
 
 ```bash
-git clone https://github.com/your-username/promo-sensei.git
+git clone https://github.com/abhaymishra8765/promo-sensei.git
 cd promo-sensei
 ```
 
